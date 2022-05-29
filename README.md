@@ -258,3 +258,24 @@ async function() {
   console.log("All promises completed. Do something interesting now.")
 }
 ```
+
+# Hashing Passwords 
+
+* `npm install bcryptjs`
+
+*usage for init hashing*
+
+```js
+const bcrypt = require("bcryptjs");
+
+// Hash User Password  - Salt & Hash
+    let salt = bcrypt.genSaltSync(10);
+    this.data.password = bcrypt.hashSync(this.data.password, salt);
+    userCollection.insertOne(this.data);
+```
+
+*usage for decoding hash*
+
+```js
+if (attemptedUser && bcrypt.compareSync(this.data.password, attemptedUser.password)) 
+```
