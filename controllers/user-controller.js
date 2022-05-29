@@ -30,7 +30,7 @@ exports.register = (req, res) => {
 exports.home = (req, res) => {
   // if user excists on session then they have signed in
   if (req.session.user) {
-    res.send("Welceome to the actual application!");
+    res.render("home-dashboard", { username: req.session.user.username });
   } else {
     res.render("home-guest");
   }
