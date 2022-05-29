@@ -19,4 +19,4 @@ app.set("view engine", "ejs");
 // set routers
 app.use(router);
 
-app.listen(3000);
+module.exports = app;

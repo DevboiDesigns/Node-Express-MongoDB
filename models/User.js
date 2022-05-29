@@ -1,3 +1,5 @@
+// Set location to Database
+const userCollection = require("../db").collection("users");
 const validator = require("validator");
 
 let User = function (data) {
@@ -21,8 +23,8 @@ User.prototype.cleanUp = function () {
   // get rid of bogus properties - security
   this.data = {
     // ----------------------- .trim = remove white spaces
-    username: this.data.username.trim.toLowerCase(),
-    email: this.data.email.trim.toLowerCase(),
+    username: this.data.username.trim().toLowerCase(),
+    email: this.data.email.trim().toLowerCase(),
     password: this.data.password,
   };
 };
@@ -64,7 +66,10 @@ User.prototype.register = function () {
   // 1 Validate user data
   this.cleanUp();
   this.validate();
-  // 2 Only if no errors, save in database
+  // 2 Only if no errors, SAVE in database
+  if (!this.errors.length) {
+    userCollection.insertOne(this.data);
+  }
 };
 
 module.exports = User;
