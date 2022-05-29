@@ -37,35 +37,6 @@ if (typeof this.data.username != "string") {
 username: this.data.username.trim().toLowerCase()
 ```
 
-# Connecting MongoDb
-
-* `npm install mongodb`
-* `npm install connect-mongo` - to store cookies in database - session
-
-**require in package**
-
-* `const {MongoClient} = require('mongodb')`
-* `let db`
-
-**in db.js file**
-
-```js
-const { MongoClient } = require("mongodb");
-const client = new MongoClient(
-  "mongoDB connection string"
-);
-
-async function start() {
-  await client.connect();
-  module.exports = client.db();
-  const app = require("./app");
-  app.listen(3000);
-}
-
-start();
-
-```
-  
 # Enviorment Variables 
 * `.env` - create file with name
   
@@ -86,6 +57,37 @@ dotenv.config();
 const client = new MongoClient(process.env.CONNECTIONSTRING);
 ```
 
+
+# Connecting MongoDb
+
+* `npm install mongodb`
+* `npm install connect-mongo` - to store cookies in database - session
+
+**require in package**
+
+* `const {MongoClient} = require('mongodb')`
+
+**in db.js file**
+
+```js
+// Config Enviorment Variables
+const dotenv = require("dotenv");
+dotenv.config();
+// ------------------------------------
+const { MongoClient } = require("mongodb");
+const client = new MongoClient(process.env.CONNECTIONSTRING); // string is env var
+
+async function start() {
+  await client.connect();
+  module.exports = client;
+  const app = require("./app");
+  app.listen(process.env.PORT); // port is env var
+}
+
+start();
+
+```
+  
 # Promises 
 
 * Syntax for writing a promise - similar to RESULT type in swift
