@@ -1,6 +1,7 @@
 const express = require("express");
 const session = require("express-session");
 const MongoStore = require("connect-mongo");
+const flash = require("connect-flash");
 const app = express();
 
 // Sessions
@@ -15,6 +16,7 @@ let sessionOptions = session({
 });
 
 app.use(sessionOptions);
+app.use(flash());
 
 // require in all routers
 const router = require("./routes/router");

@@ -351,3 +351,55 @@ res.render("home-dashboard", { username: req.session.user.username });
 ```js
 <h2>Hello <strong><%= username %></strong>, your feed is empty.</h2>
 ```
+
+# Flash Messaging 
+* `npm install connect-flash`
+
+**init in app.js**
+
+* `const flash = require('connect-flash')`
+* `app.use(flash());`
+
+**Usage**
+
+```js
+exports.login = (req, res) => {
+  let user = new User(req.body);
+  user
+    .login()
+    .then((result) => {
+      req.session.user = { favColor: "blue", username: user.data.username };
+      req.session.save(() => {
+        res.redirect("/");
+      });
+    })
+    .catch((error) => {
+      //----------------------------FLASH will store errors in session memory 
+      req.flash('errors', error)
+      res.redirect('/')
+    });
+};
+```
+
+**Controller that renders view**
+
+```js 
+exports.home = (req, res) => {
+  // if user excists on session then they have signed in
+  if (req.session.user) {
+    res.render("home-dashboard", { username: req.session.user.username });
+  } else {
+    res.render("home-guest", { errors: req.flash("errors") });
+  }
+};
+```
+
+
+**EJS usage in HTML file**
+
+```html
+<div class="container py-md-5">
+<% errors.forEach((message) => { %>
+<div class="alert alert-danger text-center"><%= message %></div>
+<% }) %>
+```
