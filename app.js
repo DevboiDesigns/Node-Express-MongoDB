@@ -1,5 +1,20 @@
 const express = require("express");
+const session = require("express-session");
+const MongoStore = require("connect-mongo");
 const app = express();
+
+// Sessions
+let sessionOptions = session({
+  secret: "asdfljkadflkjlkjasdkdd",
+  store: MongoStore.create({ client: require("./db") }),
+  // Boiler
+  resave: false,
+  saveUninitialized: false,
+  // miliseconds to one Day/ 24hrs
+  cookie: { maxAge: 1000 * 60 * 60 * 24, httpOnly: true },
+});
+
+app.use(sessionOptions);
 
 // require in all routers
 const router = require("./routes/router");

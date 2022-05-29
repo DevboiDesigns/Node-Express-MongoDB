@@ -5,6 +5,8 @@ exports.login = (req, res) => {
   user
     .login()
     .then((result) => {
+      // set session on req - add prop "user" - set prop for new prop "user" - will only run when Login is run
+      req.session.user = { favColor: "blue", username: user.data.username };
       res.send(result);
     })
     .catch((error) => {
@@ -26,5 +28,10 @@ exports.register = (req, res) => {
 };
 
 exports.home = (req, res) => {
-  res.render("home-guest");
+  // if user excists on session then they have signed in
+  if (req.session.user) {
+    res.send("Welceome to the actual application!");
+  } else {
+    res.render("home-guest");
+  }
 };

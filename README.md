@@ -40,6 +40,7 @@ username: this.data.username.trim.toLowerCase()
 # Connecting MongoDb
 
 * `npm install mongodb`
+* `npm install connect-mongo` - to store cookies in database - session
 
 **require in package**
 
@@ -279,3 +280,56 @@ const bcrypt = require("bcryptjs");
 ```js
 if (attemptedUser && bcrypt.compareSync(this.data.password, attemptedUser.password)) 
 ```
+
+
+# Sessions
+* `npm install express-session`
+
+**Config**
+
+```js
+const session = require("express-session");
+
+
+// Sessions
+let sessionOptions = session({
+  secret: "asdfljkadflkjlkjasdkdd",
+  // Store cookies in database 
+  store: MongoStore.create({ client: require("./db") }),
+  // Boiler
+  resave: false,
+  saveUninitialized: false,
+  // miliseconds to one Day/ 24hrs
+  cookie: { maxAge: 1000 * 60 * 60 * 24, httpOnly: true },
+});
+
+app.use(sessionOptions)
+```
+
+*usage for capturing setting session*
+
+* stores the object in session memory
+* creates a cookie in web browser 
+
+```js
+.login()
+    .then((result) => {
+      // set session on req - add prop "user" - set prop for new prop "user" - will only run when Login is run
+      req.session.user = { favColor: "blue", username: user.data.username };
+      res.send(result);
+    })
+```
+
+*usage for checking if session excist*
+
+```js
+// if user excists on session then they have signed in
+  if (req.session.user) {
+    res.send("Welceome to the actual application!");
+  } else {
+    res.render("home-guest");
+  }
+```
+
+
+# Tokens
