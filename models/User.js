@@ -8,6 +8,7 @@ let User = function (data) {
   this.errors = [];
 };
 
+// ---------------------------------------------- Clean Up
 User.prototype.cleanUp = function () {
   if (typeof this.data.username != "string") {
     this.data.username = "";
