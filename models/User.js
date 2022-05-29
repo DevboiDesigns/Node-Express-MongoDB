@@ -29,6 +29,7 @@ User.prototype.cleanUp = function () {
   };
 };
 
+// ---------------------------------------------- Validate
 User.prototype.validate = function () {
   // Empty error validation
   if (this.data.username == "") {
@@ -61,7 +62,22 @@ User.prototype.validate = function () {
   }
 };
 
-// Static Function
+// ---------------------------------------------- Login
+User.prototype.login = function (callBack) {
+  this.cleanUp();
+  userCollection.findOne(
+    { username: this.data.username },
+    (err, attemptedUser) => {
+      if (attemptedUser && attemptedUser.password == this.data.password) {
+        callBack("Congrats!");
+      } else {
+        callBack("Invalid username/ password");
+      }
+    }
+  );
+};
+
+// ---------------------------------------------- Register
 User.prototype.register = function () {
   // 1 Validate user data
   this.cleanUp();
