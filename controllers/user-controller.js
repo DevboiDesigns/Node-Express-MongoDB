@@ -7,14 +7,20 @@ exports.login = (req, res) => {
     .then((result) => {
       // set session on req - add prop "user" - set prop for new prop "user" - will only run when Login is run
       req.session.user = { favColor: "blue", username: user.data.username };
-      res.send(result);
+      req.session.save(() => {
+        res.redirect("/");
+      });
     })
     .catch((error) => {
       res.send(error);
     });
 };
 
-exports.logout = () => {};
+exports.logout = (req, res) => {
+  req.session.destroy(() => {
+    res.redirect("/");
+  });
+};
 
 exports.register = (req, res) => {
   // Create new objects with keyword "new"
