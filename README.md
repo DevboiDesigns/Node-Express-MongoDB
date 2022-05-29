@@ -37,7 +37,7 @@ if (typeof this.data.username != "string") {
 username: this.data.username.trim.toLowerCase()
 ```
 
-# Connection MongoDb
+# Connecting MongoDb
 
 * `npm install mongodb`
 
@@ -65,7 +65,7 @@ start();
 
 ```
   
-## Enviorment Variables 
+# Enviorment Variables 
 * `.env` - create file with name
   
 **Add entry**
@@ -83,4 +83,178 @@ const dotenv = require("dotenv");
 dotenv.config();
 
 const client = new MongoClient(process.env.CONNECTIONSTRING);
+```
+
+# Promises 
+
+* Syntax for writing a promise - similar to RESULT type in swift
+
+```js
+User.prototype.login = function () {
+  // return new Promise()
+  return new Promise((resolve, reject) => {
+    this.cleanUp();
+    // MongoDB method to find one entry
+    userCollection.findOne(
+      { username: this.data.username },
+      (err, attemptedUser) => {
+        if (attemptedUser && attemptedUser.password == this.data.password) {
+          resolve("Congrats!");
+        } else {
+          reject("Invalid username/ password");
+        }
+      }
+    );
+  });
+};
+```
+
+
+* Syntax for working with a Promise 
+
+*init*
+
+```js
+user.login().then().catch();
+```
+
+*usage*
+
+```js
+exports.login = (req, res) => {
+  let user = new User(req.body);
+  user
+    .login()
+    .then((result) => {
+      res.send(result);
+    })
+    .catch((error) => {
+      res.send(error);
+    });
+};
+```
+
+## Example code on Promises
+
+```js
+eatBreakfast()
+  .then(() => eatLunch())
+  .then(() => eatDinner())
+  .then(() => eatDessert())
+  .catch((error) => {
+  console.log(error)
+})
+
+
+// Do NOT modify below this line until instructed to do so.
+function eatBreakfast() {
+  return new Promise(function(resolve, reject) {
+    console.log("The eatBreakfast function started executing.")
+    setTimeout(function() {
+      addText("You just ate breakfast.")
+      resolve()
+    }, 800)
+  })
+}
+
+function eatLunch() {
+  return new Promise(function(resolve, reject) {
+    console.log("The eatLunch function started executing.")
+    setTimeout(function() {
+      addText("You just ate lunch.")
+      resolve()
+    }, 300)
+  })
+}
+
+function eatDinner() {
+  return new Promise(function(resolve, reject) {
+    console.log("The eatDinner function started executing.")
+    setTimeout(function() {
+      addText("You just ate dinner.")
+      resolve()
+    }, 600)
+  })
+}
+
+function eatDessert() {
+  return new Promise(function(resolve, reject) {
+    console.log("The eatDessert function started executing.")
+    setTimeout(function() {
+      addText("You just ate dessert.")
+      resolve()
+    }, 40)
+  })
+}
+```
+
+# Async/ Await
+
+### Example Async/ Await Code
+
+```js
+async function start() {
+  try {
+    await eatBreakfast()
+    await eatLunch()
+    await eatDinner()
+    await eatDessert()
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+start()
+
+
+// Do NOT modify below this line until instructed to do so.
+function eatBreakfast() {
+  return new Promise(function(resolve, reject) {
+    console.log("The eatBreakfast function started executing.")
+    setTimeout(function() {
+      addText("You just ate breakfast.")
+      resolve()
+    }, 800)
+  })
+}
+
+function eatLunch() {
+  return new Promise(function(resolve, reject) {
+    console.log("The eatLunch function started executing.")
+    setTimeout(function() {
+      addText("You just ate lunch.")
+      resolve()
+    }, 300)
+  })
+}
+
+function eatDinner() {
+  return new Promise(function(resolve, reject) {
+    console.log("The eatDinner function started executing.")
+    setTimeout(function() {
+      addText("You just ate dinner.")
+      resolve()
+    }, 600)
+  })
+}
+
+function eatDessert() {
+  return new Promise(function(resolve, reject) {
+    console.log("The eatDessert function started executing.")
+    setTimeout(function() {
+      addText("You just ate dessert.")
+      resolve()
+    }, 40)
+  })
+}
+```
+
+*When the order the methods return in dont matter, can use this syntax*
+
+```js
+async function() {
+  await Promise.all([promise1, promise2, promise3, promise4])
+  // JavaScript will wait until ALL of the promises have completed
+  console.log("All promises completed. Do something interesting now.")
+}
 ```
