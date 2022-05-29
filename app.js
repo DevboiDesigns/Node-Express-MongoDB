@@ -4,6 +4,11 @@ const app = express();
 // require in all routers
 const router = require("./routes/router");
 
+// add user submitted data to request object
+app.use(express.urlencoded({ extended: false }));
+// accept JSON
+app.use(express.json());
+
 // set public files - CSS etc.
 app.use(express.static("public"));
 // first arg - boiler; 2nd arg - folder location for views
