@@ -34,7 +34,7 @@ if (typeof this.data.username != "string") {
 
 ```js
 // --------------------- .trim = remove white spaces 
-username: this.data.username.trim.toLowerCase()
+username: this.data.username.trim().toLowerCase()
 ```
 
 # Connecting MongoDb
