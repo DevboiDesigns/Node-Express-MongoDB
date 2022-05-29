@@ -333,3 +333,21 @@ app.use(sessionOptions)
 
 
 # Tokens
+
+
+
+# Injecting/ Extracting Data 
+
+* `<%= username %>` - expose properties 
+
+```js
+res.render("home-dashboard", { username: req.session.user.username });
+```
+
+*extracting or using*
+
+* in ejs/ html file 
+
+```js
+<h2>Hello <strong><%= username %></strong>, your feed is empty.</h2>
+```
