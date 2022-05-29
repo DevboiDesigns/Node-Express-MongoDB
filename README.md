@@ -65,3 +65,22 @@ start();
 
 ```
   
+## Enviorment Variables 
+* `.env` - create file with name
+  
+**Add entry**
+
+```
+CONNECTIONSTRING=mongodb+srv://<username>:<password>@cluster0.ia7ffaz.mongodb.net/<database>?retryWrites=true&w=majority
+```
+
+* `npm install dotenv`
+
+**IN DB file**
+
+```js
+const dotenv = require("dotenv");
+dotenv.config();
+
+const client = new MongoClient(process.env.CONNECTIONSTRING);
+```
