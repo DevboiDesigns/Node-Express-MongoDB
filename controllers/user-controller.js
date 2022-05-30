@@ -6,12 +6,13 @@ exports.login = (req, res) => {
     .login()
     .then((result) => {
       // set session on req - add prop "user" - set prop for new prop "user" - will only run when Login is run
-      req.session.user = { favColor: "blue", username: user.data.username };
+      req.session.user = { avatar: user.avatar, username: user.data.username };
       req.session.save(() => {
         res.redirect("/");
       });
     })
     .catch((error) => {
+      // Flash stores in session memory
       req.flash("errors", error);
       req.session.save(() => {
         res.redirect("/");
@@ -31,7 +32,7 @@ exports.register = (req, res) => {
   user
     .register()
     .then((result) => {
-      req.session.user = { username: user.data.username };
+      req.session.user = { avatar: user.avatar, username: user.data.username };
       req.session.save(() => {
         res.redirect("/");
       });
@@ -50,7 +51,10 @@ exports.register = (req, res) => {
 exports.home = (req, res) => {
   // if user excists on session then they have signed in
   if (req.session.user) {
-    res.render("home-dashboard", { username: req.session.user.username });
+    res.render("home-dashboard", {
+      avatar: req.session.user.avatar,
+      username: req.session.user.username,
+    });
   } else {
     res.render("home-guest", {
       errors: req.flash("errors"),

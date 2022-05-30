@@ -408,3 +408,45 @@ exports.home = (req, res) => {
 <div class="alert alert-danger text-center"><%= message %></div>
 <% }) %>
 ```
+
+# Gravatar 
+* Pulls in image if any other accounts online have gravatar (google etc)
+* [Gravatar](https://en.gravatar.com)
+* `npm install md5` - hashing algorythem for gravatar
+
+**USAGE**
+
+* on Model
+```js
+// hasher for Gravatar
+const md5 = require("md5");
+
+User.prototype.getAvatar = function () {
+  this.avatar = `https://gravatar.com/avatar/${md5(this.data.email)}?s=128`;
+};
+```
+
+* on Controller pass to View
+
+```js
+.register()
+    .then((result) => {
+      req.session.user = { avatar: user.avatar, username: user.data.username };
+      req.session.save(() => {
+        res.redirect("/");
+      });
+    })
+```
+
+* HTML/ EJS
+
+```js
+ <a href="#" class="mr-2"
+   ><img
+     title="My Profile"
+     data-toggle="tooltip"
+     data-placement="bottom"
+     style="width: 32px; height: 32px; border-radius: 16px"
+     src="<%= avatar %>"
+ /></a>
+```
