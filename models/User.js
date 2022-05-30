@@ -33,36 +33,66 @@ User.prototype.cleanUp = function () {
 
 // ---------------------------------------------- Validate
 User.prototype.validate = function () {
-  // Empty error validation
-  if (this.data.username == "") {
-    this.errors.push("You must provide a username.");
-  }
-  if (
-    this.data.username != "" &&
-    !validator.isAlphanumeric(this.data.username)
-  ) {
-    this.errors.push("Username can only contain letters and numbers");
-  }
-  // Validator NPM logic/method
-  if (!validator.isEmail(this.data.email)) {
-    this.errors.push("You must provide a valide email.");
-  }
-  if (this.data.password == "") {
-    this.errors.push("You must provide a password.");
-  }
-  if (this.data.password.length > 0 && this.data.password.length < 12) {
-    this.errors.push("Password must be at least 12 characters");
-  }
-  // ---------------- bcrypt only allows 50 characters
-  if (this.data.password.length > 50) {
-    this.errors.push("Password can not exceed 50 characters");
-  }
-  if (this.data.username.length > 0 && this.data.username.length < 3) {
-    this.errors.push("Username must be at least 3 characters");
-  }
-  if (this.data.username.length > 30) {
-    this.errors.push("Username can not exceed 30 characters");
-  }
+  return new Promise(async (resolve, reject) => {
+    // Empty error validation
+    if (this.data.username == "") {
+      this.errors.push("You must provide a username.");
+    }
+    if (
+      this.data.username != "" &&
+      !validator.isAlphanumeric(this.data.username)
+    ) {
+      this.errors.push("Username can only contain letters and numbers");
+    }
+    // Validator NPM logic/method
+    if (!validator.isEmail(this.data.email)) {
+      this.errors.push("You must provide a valide email.");
+    }
+    if (this.data.password == "") {
+      this.errors.push("You must provide a password.");
+    }
+    if (this.data.password.length > 0 && this.data.password.length < 12) {
+      this.errors.push("Password must be at least 12 characters");
+    }
+    // ---------------- bcrypt only allows 50 characters
+    if (this.data.password.length > 50) {
+      this.errors.push("Password can not exceed 50 characters");
+    }
+    if (this.data.username.length > 0 && this.data.username.length < 3) {
+      this.errors.push("Username must be at least 3 characters");
+    }
+    if (this.data.username.length > 30) {
+      this.errors.push("Username can not exceed 30 characters");
+    }
+
+    // Only if username is valid, check to see if its already taken
+    // Username
+    if (
+      this.data.username.length > 2 &&
+      this.data.username.length < 31 &&
+      validator.isAlphanumeric(this.data.username)
+    ) {
+      let usernameExists = await userCollection.findOne({
+        username: this.data.username,
+      });
+      if (usernameExists) {
+        this.errors.push("That username is already in use.");
+      } else {
+        console.log("Doesnt exists");
+      }
+    }
+
+    // Email
+    if (validator.isEmail(this.data.email)) {
+      let emailExists = await userCollection.findOne({
+        email: this.data.email,
+      });
+      if (emailExists) {
+        this.errors.push("That email is already in use.");
+      }
+    }
+    resolve();
+  });
 };
 
 // ---------------------------------------------- Login
@@ -91,16 +121,21 @@ User.prototype.login = function () {
 
 // ---------------------------------------------- Register
 User.prototype.register = function () {
-  // 1 Validate user data
-  this.cleanUp();
-  this.validate();
-  // 2 Only if no errors, SAVE in database
-  if (!this.errors.length) {
-    // Hash User Password  - Salt & Hash
-    let salt = bcrypt.genSaltSync(10);
-    this.data.password = bcrypt.hashSync(this.data.password, salt);
-    userCollection.insertOne(this.data);
-  }
+  return new Promise(async (resolve, reject) => {
+    // 1 Validate user data
+    this.cleanUp();
+    await this.validate();
+    // 2 Only if no errors, SAVE in database
+    if (!this.errors.length) {
+      // Hash User Password  - Salt & Hash
+      let salt = bcrypt.genSaltSync(10);
+      this.data.password = bcrypt.hashSync(this.data.password, salt);
+      await userCollection.insertOne(this.data);
+      resolve();
+    } else {
+      reject(this.errors);
+    }
+  });
 };
 
 module.exports = User;

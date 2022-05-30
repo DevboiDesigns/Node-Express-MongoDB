@@ -28,17 +28,23 @@ exports.logout = (req, res) => {
 exports.register = (req, res) => {
   // Create new objects with keyword "new"
   let user = new User(req.body);
-  user.register();
-  if (user.errors.length) {
-    user.errors.forEach((error) => {
-      req.flash("regErrors", error);
+  user
+    .register()
+    .then((result) => {
+      req.session.user = { username: user.data.username };
+      req.session.save(() => {
+        res.redirect("/");
+      });
+    })
+    .catch((regErrors) => {
+      console.log(regErrors);
+      regErrors.forEach(function (error) {
+        req.flash("regErrors", error);
+      });
+      req.session.save(() => {
+        res.redirect("/");
+      });
     });
-    req.session.save(() => {
-      res.redirect("/");
-    });
-  } else {
-    res.send("Congrats!");
-  }
 };
 
 exports.home = (req, res) => {
